@@ -1,6 +1,12 @@
 const webpack = require('webpack');
 
 module.exports = function override(config, env) {
+  // Handle node: scheme imports
+  config.resolve.alias = {
+    ...config.resolve.alias,
+    'node:events': 'events',
+  };
+
   config.resolve.fallback = {
     ...config.resolve.fallback,
     fs: false,
@@ -19,7 +25,8 @@ module.exports = function override(config, env) {
     assert: require.resolve('assert/'),
     buffer: require.resolve('buffer/'),
     os: require.resolve('os-browserify/browser'),
-    querystring: require.resolve('querystring-es3')
+    querystring: require.resolve('querystring-es3'),
+    events: require.resolve('events/')
   };
 
   config.plugins = [
