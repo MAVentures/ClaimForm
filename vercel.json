@@ -1,0 +1,27 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": { "maxLambdaSize": "15mb" }
+    }
+  ],
+  "routes": [
+    {
+      "src": "^/static/(.*)",
+      "headers": { "cache-control": "public, max-age=31536000, immutable" },
+      "continue": true
+    },
+    {
+      "src": "^/[^.]+$",
+      "dest": "/"
+    }
+  ],
+  "functions": {
+    "api/*": {
+      "memory": 1024,
+      "maxDuration": 60
+    }
+  }
+} 
