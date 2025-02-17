@@ -7,6 +7,7 @@ module.exports = function override(config, env) {
     child_process: false,
     net: false,
     tls: false,
+    http2: false,
     stream: require.resolve('stream-browserify'),
     http: require.resolve('stream-http'),
     https: require.resolve('https-browserify'),
