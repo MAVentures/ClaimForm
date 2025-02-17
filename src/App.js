@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
 import ClaimForm from './components/ClaimForm/ClaimForm';
@@ -8,6 +8,10 @@ import { Box } from '@mui/material';
 
 const App = () => {
   const [darkMode, setDarkMode] = useState(true);
+  
+  useEffect(() => {
+    console.log('App component mounted');
+  }, []);
 
   const theme = createTheme({
     palette: {
@@ -55,6 +59,7 @@ const App = () => {
             display: 'flex',
             flexDirection: 'column',
             minHeight: '100vh',
+            backgroundColor: theme.palette.background.default,
           }}
         >
           <Header darkMode={darkMode} setDarkMode={setDarkMode} />
@@ -63,11 +68,17 @@ const App = () => {
             sx={{
               flexGrow: 1,
               padding: { xs: 2, sm: 3, md: 4 },
-              backgroundColor: theme.palette.background.default,
             }}
           >
             <Routes>
-              <Route path="/" element={<ClaimForm />} />
+              <Route 
+                path="/" 
+                element={
+                  <React.Suspense fallback={<div>Loading...</div>}>
+                    <ClaimForm />
+                  </React.Suspense>
+                } 
+              />
             </Routes>
           </Box>
           <Footer />
