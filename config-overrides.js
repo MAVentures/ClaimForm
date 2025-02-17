@@ -34,7 +34,11 @@ module.exports = function override(config, env) {
       (resource) => {
         resource.request = resource.request.replace(/^node:/, '');
       }
-    )
+    ),
+    new webpack.DefinePlugin({
+      'process.stdout': JSON.stringify({ isTTY: false, write: () => {} }),
+      'process.stderr': JSON.stringify({ isTTY: false, write: () => {} })
+    })
   ];
 
   return config;
