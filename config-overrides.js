@@ -1,38 +1,6 @@
 const webpack = require('webpack');
-const enhancedResolve = require('enhanced-resolve');
 
 module.exports = function override(config, env) {
-  // Create custom resolver
-  const resolveNodePrefixImports = {
-    apply: (resolver) => {
-      const target = resolver.ensureHook('resolve');
-      resolver.getHook('resolve').tapAsync(
-        'ResolveNodePrefixPlugin',
-        (request, resolveContext, callback) => {
-          if (request.request && request.request.startsWith('node:')) {
-            const moduleName = request.request.slice(5); // Remove 'node:' prefix
-            const newRequest = {
-              ...request,
-              request: moduleName,
-            };
-            resolver.doResolve(
-              target,
-              newRequest,
-              null,
-              resolveContext,
-              callback,
-            );
-            return;
-          }
-          callback();
-        },
-      );
-    },
-  };
-
-  // Add the custom resolver plugin
-  config.resolve.plugins = [...(config.resolve.plugins || []), resolveNodePrefixImports];
-
   config.resolve.fallback = {
     ...config.resolve.fallback,
     fs: false,
@@ -60,7 +28,13 @@ module.exports = function override(config, env) {
     new webpack.ProvidePlugin({
       process: 'process/browser',
       Buffer: ['buffer', 'Buffer']
-    })
+    }),
+    new webpack.NormalModuleReplacementPlugin(
+      /^node:/,
+      (resource) => {
+        resource.request = resource.request.replace(/^node:/, '');
+      }
+    )
   ];
 
   return config;
