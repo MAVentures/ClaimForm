@@ -102,9 +102,6 @@ export const handleClaimSubmission = async (formData, files) => {
       await uploadFile(folderId, file);
     }
 
-    // Send email notification
-    await sendEmailNotification(formData);
-
     return { success: true };
   } catch (error) {
     console.error('Error handling claim submission:', error);

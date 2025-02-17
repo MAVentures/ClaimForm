@@ -69,15 +69,14 @@ const ClaimInformation = () => {
           onChange={(value) => {
             shipmentDateHelpers.setValue(value);
           }}
-          renderInput={(params) => (
-            <MuiTextField
-              {...params}
-              fullWidth
-              required
-              error={shipmentDateMeta.touched && !!shipmentDateMeta.error}
-              helperText={shipmentDateMeta.touched && shipmentDateMeta.error}
-            />
-          )}
+          slotProps={{
+            textField: {
+              fullWidth: true,
+              required: true,
+              error: shipmentDateMeta.touched && !!shipmentDateMeta.error,
+              helperText: shipmentDateMeta.touched && shipmentDateMeta.error
+            }
+          }}
         />
       </Grid>
     </Grid>
