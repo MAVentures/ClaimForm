@@ -1,10 +1,15 @@
 {
   "version": 2,
+  "framework": "create-react-app",
   "builds": [
     {
       "src": "package.json",
       "use": "@vercel/static-build",
-      "config": { "maxLambdaSize": "15mb" }
+      "config": {
+        "maxLambdaSize": "15mb",
+        "buildCommand": "npm run build",
+        "outputDirectory": "build"
+      }
     }
   ],
   "routes": [
@@ -16,7 +21,7 @@
     {
       "src": "/static/(.*)",
       "headers": { "cache-control": "public, max-age=31536000, immutable" },
-      "continue": true
+      "dest": "/static/$1"
     },
     {
       "src": "/favicon.ico",
@@ -28,7 +33,7 @@
     },
     {
       "src": "^/[^.]+$",
-      "dest": "/"
+      "dest": "/index.html"
     }
   ],
   "functions": {
