@@ -12,6 +12,7 @@ import {
 } from '@mui/material';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
+import { createClaimFolder, uploadFileToDrive } from '../../services/driveService';
 
 import ClaimInformation from './steps/ClaimInformation';
 import ClaimantInformation from './steps/ClaimantInformation';
@@ -171,12 +172,39 @@ const ClaimForm = () => {
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
+      // Create folder structure in Google Drive
+      const folderId = await createClaimFolder(values);
+      
+      // Upload documents to appropriate subfolders
+      const uploadPromises = [];
+      
+      // Upload claim documents
+      if (values.documents && values.documents.length > 0) {
+        for (const doc of values.documents) {
+          uploadPromises.push(uploadFileToDrive(doc, folderId));
+        }
+      }
+      
+      // Upload product documents
+      if (values.products) {
+        for (const product of values.products) {
+          if (product.documents && product.documents.length > 0) {
+            for (const doc of product.documents) {
+              uploadPromises.push(uploadFileToDrive(doc, folderId));
+            }
+          }
+        }
+      }
+      
+      await Promise.all(uploadPromises);
+      
       // TODO: Implement API call to submit form
       console.log('Form values:', values);
       setIsSubmitted(true);
       handleNext();
     } catch (error) {
       console.error('Error submitting form:', error);
+      // You might want to show an error message to the user here
     } finally {
       setSubmitting(false);
     }
@@ -202,23 +230,25 @@ const ClaimForm = () => {
           alternativeLabel
           sx={{ mt: 3, mb: 4 }}
         >
-          {steps.slice(0, -1).map((label) => (
+          {steps.map((label) => (
             <Step key={label}>
               <StepLabel>{label}</StepLabel>
             </Step>
           ))}
         </Stepper>
 
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-        >
-          {({ isSubmitting }) => (
-            <Form>
-              {getStepContent(activeStep)}
-              
-              {!isSubmitted && (
+        {isSubmitted ? (
+          <ClaimSubmitted />
+        ) : (
+          <Formik
+            initialValues={initialValues}
+            validationSchema={validationSchema}
+            onSubmit={handleSubmit}
+          >
+            {({ isSubmitting }) => (
+              <Form>
+                {getStepContent(activeStep)}
+                
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
                   <Button
                     disabled={activeStep === 0}
@@ -237,10 +267,10 @@ const ClaimForm = () => {
                     {activeStep === steps.length - 2 ? 'Submit Claim' : 'Next'}
                   </Button>
                 </Box>
-              )}
-            </Form>
-          )}
-        </Formik>
+              </Form>
+            )}
+          </Formik>
+        )}
       </Paper>
     </Container>
   );
