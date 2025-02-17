@@ -9,5 +9,8 @@
     "env": {
       "GENERATE_SOURCEMAP": "false"
     }
+  },
+  "functions": {
+    "shell": "cmd.exe"
   }
 } 
