@@ -9,9 +9,22 @@
   ],
   "routes": [
     {
-      "src": "^/static/(.*)",
+      "src": "/manifest.json",
+      "headers": { "cache-control": "public, max-age=0, must-revalidate" },
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/static/(.*)",
       "headers": { "cache-control": "public, max-age=31536000, immutable" },
       "continue": true
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/logo192.png",
+      "dest": "/logo192.png"
     },
     {
       "src": "^/[^.]+$",

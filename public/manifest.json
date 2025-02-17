@@ -1,0 +1,15 @@
+{
+  "short_name": "MAV Claims",
+  "name": "MAV Inc Freight Claims Portal",
+  "icons": [
+    {
+      "src": "images/MAV.1.BackGround.Transparent.PNG",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/png"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#2eb67d",
+  "background_color": "#ffffff"
+} 
