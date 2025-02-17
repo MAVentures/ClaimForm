@@ -16,7 +16,8 @@ module.exports = function override(config, env) {
     util: require.resolve('util/'),
     url: require.resolve('url/'),
     assert: require.resolve('assert/'),
-    buffer: require.resolve('buffer/')
+    buffer: require.resolve('buffer/'),
+    os: require.resolve('os-browserify/browser')
   };
 
   config.plugins = [
