@@ -1,5 +1,15 @@
 const webpack = require('webpack');
 
+// HTTP2 Constants that need to be polyfilled
+const http2Constants = {
+  HTTP2_HEADER_CONTENT_ENCODING: 'content-encoding',
+  HTTP2_HEADER_CONTENT_TYPE: 'content-type',
+  HTTP2_HEADER_STATUS: ':status',
+  HTTP2_HEADER_METHOD: ':method',
+  HTTP2_HEADER_PATH: ':path',
+  HTTP2_HEADER_AUTHORITY: ':authority'
+};
+
 module.exports = function override(config, env) {
   config.resolve.fallback = {
     ...config.resolve.fallback,
@@ -37,7 +47,9 @@ module.exports = function override(config, env) {
     ),
     new webpack.DefinePlugin({
       'process.stdout': JSON.stringify({ isTTY: false, write: () => {} }),
-      'process.stderr': JSON.stringify({ isTTY: false, write: () => {} })
+      'process.stderr': JSON.stringify({ isTTY: false, write: () => {} }),
+      'require("http2").constants': JSON.stringify(http2Constants),
+      'require("node:http2").constants': JSON.stringify(http2Constants)
     })
   ];
 
