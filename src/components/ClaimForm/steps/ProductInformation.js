@@ -8,7 +8,7 @@ import {
   Paper,
 } from '@mui/material';
 import { Field, FieldArray } from 'formik';
-import { TextField } from 'formik-mui';
+import { TextField } from '@formik/mui';
 import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
 
 const ProductInformation = () => {
