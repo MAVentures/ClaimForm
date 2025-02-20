@@ -30,7 +30,8 @@ module.exports = function override(config, env) {
     buffer: require.resolve('buffer/'),
     os: require.resolve('os-browserify/browser'),
     querystring: require.resolve('querystring-es3'),
-    events: require.resolve('events/')
+    events: require.resolve('events/'),
+    "vm": false
   };
 
   config.plugins = [

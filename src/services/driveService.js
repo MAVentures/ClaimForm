@@ -1,6 +1,4 @@
-import { google } from 'googleapis';
-
-const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
+// Remove the unused import
 
 // Helper function to make authenticated requests to Google Drive API
 const makeGoogleDriveRequest = async (endpoint, method = 'GET', body = null) => {

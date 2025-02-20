@@ -11,7 +11,7 @@ import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 
 const Header = ({ darkMode, setDarkMode }) => {
-  const theme = useTheme();
+  // const theme = useTheme();
 
   return (
     <AppBar 
