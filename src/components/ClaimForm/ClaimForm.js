@@ -18,23 +18,15 @@ import { createClaimFolder, uploadFileToDrive } from '../../services/driveServic
 import { submitClaimForm } from '../../services/apiService';
 
 import ClaimInformation from './steps/ClaimInformation';
-import ClaimantInformation from './steps/ClaimantInformation';
-import ShipperInformation from './steps/ShipperInformation';
-import ConsigneeInformation from './steps/ConsigneeInformation';
-import ProductInformation from './steps/ProductInformation';
-import AdditionalCosts from './steps/AdditionalCosts';
-import DocumentUpload from './steps/DocumentUpload';
+import CombinedAddressInformation from './steps/CombinedAddressInformation';
+import CombinedDataInformation from './steps/CombinedDataInformation';
 import Summary from './steps/Summary';
 import ClaimSubmitted from './steps/ClaimSubmitted';
 
 const steps = [
   'Claim Information',
-  'Claimant Information',
-  'Shipper Information',
-  'Consignee Information',
-  'Product Information',
-  'Additional Costs',
-  'Documents',
+  'Contact Information',
+  'Claim Details',
   'Summary',
   'Submitted',
 ];
@@ -154,20 +146,12 @@ const ClaimForm = () => {
       case 0:
         return <ClaimInformation />;
       case 1:
-        return <ClaimantInformation />;
+        return <CombinedAddressInformation />;
       case 2:
-        return <ShipperInformation />;
+        return <CombinedDataInformation />;
       case 3:
-        return <ConsigneeInformation />;
-      case 4:
-        return <ProductInformation />;
-      case 5:
-        return <AdditionalCosts />;
-      case 6:
-        return <DocumentUpload />;
-      case 7:
         return <Summary />;
-      case 8:
+      case 4:
         return <ClaimSubmitted />;
       default:
         return 'Unknown step';
