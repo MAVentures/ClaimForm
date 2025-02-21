@@ -112,6 +112,23 @@ const validationSchema = Yup.object().shape({
   claimantCountry: Yup.string().required('Country is required'),
   
   // Add similar validation for shipper and consignee information
+  shipperName: Yup.string().required('Shipper name is required'),
+  shipperPhone: Yup.string().required('Shipper phone is required'),
+  shipperEmail: Yup.string().email('Invalid email').required('Shipper email is required'),
+  shipperAddress: Yup.string().required('Shipper address is required'),
+  shipperCity: Yup.string().required('Shipper city is required'),
+  shipperState: Yup.string().required('Shipper state is required'),
+  shipperZip: Yup.string().required('Shipper ZIP is required'),
+  shipperCountry: Yup.string().required('Shipper country is required'),
+  
+  consigneeName: Yup.string().required('Consignee name is required'),
+  consigneePhone: Yup.string().required('Consignee phone is required'),
+  consigneeEmail: Yup.string().email('Invalid email').required('Consignee email is required'),
+  consigneeAddress: Yup.string().required('Consignee address is required'),
+  consigneeCity: Yup.string().required('Consignee city is required'),
+  consigneeState: Yup.string().required('Consignee state is required'),
+  consigneeZip: Yup.string().required('Consignee ZIP is required'),
+  consigneeCountry: Yup.string().required('Consignee country is required'),
   
   products: Yup.array().of(
     Yup.object().shape({
@@ -125,6 +142,9 @@ const validationSchema = Yup.object().shape({
   documents: Yup.array().min(1, 'At least one document is required for the claim'),
   
   summary: Yup.string().required('Summary is required'),
+}).test('validation-test', '', function(value) {
+  console.log('Validating form data:', value);
+  return true;
 });
 
 const ClaimForm = () => {
@@ -256,9 +276,12 @@ const ClaimForm = () => {
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={handleSubmit}
+            onSubmit={(values, actions) => {
+              console.log('Formik onSubmit triggered');
+              return handleSubmit(values, actions);
+            }}
           >
-            {({ isSubmitting }) => (
+            {({ isSubmitting, submitForm }) => (
               <Form>
                 {getStepContent(activeStep)}
                 
@@ -274,7 +297,15 @@ const ClaimForm = () => {
                   <Button
                     variant="contained"
                     type={activeStep === steps.length - 2 ? "submit" : "button"}
-                    onClick={activeStep !== steps.length - 2 ? handleNext : undefined}
+                    onClick={(e) => {
+                      console.log('Button clicked', { activeStep, isLastStep: activeStep === steps.length - 2 });
+                      if (activeStep !== steps.length - 2) {
+                        handleNext();
+                      } else {
+                        console.log('Attempting form submission');
+                        submitForm();
+                      }
+                    }}
                     disabled={isSubmitting}
                   >
                     {activeStep === steps.length - 2 ? 'Submit Claim' : 'Next'}
