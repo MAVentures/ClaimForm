@@ -1,25 +1,31 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/manifest.json",
-      "destination": "/manifest.json"
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
     },
     {
-      "source": "/static/(.*)",
-      "destination": "/static/$1"
+      "src": "/manifest.json",
+      "dest": "/manifest.json"
     },
     {
-      "source": "/images/(.*)",
-      "destination": "/images/$1"
+      "src": "/logo192.png",
+      "dest": "/logo192.png"
     },
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/logo512.png",
+      "dest": "/logo512.png"
+    },
+    {
+      "src": "/favicon-16x16.png",
+      "dest": "/favicon-16x16.png"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "dest": "/favicon-32x32.png"
     }
   ],
-  "build": {
-    "env": {
-      "GENERATE_SOURCEMAP": "false"
-    }
-  }
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "framework": "create-react-app"
 } 

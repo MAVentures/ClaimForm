@@ -9,10 +9,13 @@ import {
   Button,
   Typography,
   useTheme,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { createClaimFolder, uploadFileToDrive } from '../../services/driveService';
+import { submitClaimForm } from '../../services/apiService';
 
 import ClaimInformation from './steps/ClaimInformation';
 import ClaimantInformation from './steps/ClaimantInformation';
@@ -136,6 +139,7 @@ const ClaimForm = () => {
   const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleNext = () => {
     setActiveStep((prevStep) => prevStep + 1);
@@ -173,6 +177,7 @@ const ClaimForm = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       console.log('Form submission started');
+      setError(null);
       
       // Create folder structure in Google Drive
       const folderId = await createClaimFolder(values);
@@ -204,17 +209,22 @@ const ClaimForm = () => {
       await Promise.all(uploadPromises);
       console.log('All documents uploaded successfully');
       
-      // TODO: Implement API call to submit form
-      console.log('Form values:', values);
+      // Submit form data to API
+      const response = await submitClaimForm({
+        ...values,
+        folderId,
+        submittedAt: new Date().toISOString(),
+      });
+      
+      console.log('API Response:', response);
       
       // Set submission state and move to final step
-      console.log('Setting submission state...');
       setIsSubmitted(true);
       setActiveStep(steps.length - 1); // Move to the last step (Submitted)
       console.log('Form submission completed successfully');
     } catch (error) {
       console.error('Error submitting form:', error);
-      // You might want to show an error message to the user here
+      setError(error.message || 'An error occurred while submitting the form. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -270,7 +280,7 @@ const ClaimForm = () => {
                   <Box sx={{ flex: '1 1 auto' }} />
                   <Button
                     variant="contained"
-                    type="submit"
+                    type={activeStep === steps.length - 2 ? "submit" : "button"}
                     onClick={activeStep !== steps.length - 2 ? handleNext : undefined}
                     disabled={isSubmitting}
                   >
@@ -282,6 +292,17 @@ const ClaimForm = () => {
           </Formik>
         )}
       </Paper>
+      
+      <Snackbar
+        open={!!error}
+        autoHideDuration={6000}
+        onClose={() => setError(null)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setError(null)} severity="error" sx={{ width: '100%' }}>
+          {error}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 };

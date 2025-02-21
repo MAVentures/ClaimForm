@@ -1,6 +1,6 @@
 {
   "short_name": "MAV Claims",
-  "name": "MAV Inc Freight Claims Portal",
+  "name": "MAV Inc Freight Claims",
   "icons": [
     {
       "src": "favicon.ico",
@@ -19,9 +19,7 @@
     }
   ],
   "start_url": ".",
-  "scope": "/",
   "display": "standalone",
-  "theme_color": "#2eb67d",
-  "background_color": "#ffffff",
-  "description": "MAV Inc Freight Claims Management Portal"
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
 } 
