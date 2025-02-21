@@ -43,7 +43,7 @@ const Header = ({ darkMode, setDarkMode }) => {
               display: { xs: 'block', sm: 'block' },
             }}
           >
-            Claims Portal
+            Claim Form
           </Typography>
         </Box>
         <Box sx={{ flexGrow: 1 }} />

@@ -20,7 +20,7 @@ const Footer = () => {
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'column',
+            flexDirection: 'row',
             justifyContent: 'center',
             alignItems: 'center',
             gap: 2,
