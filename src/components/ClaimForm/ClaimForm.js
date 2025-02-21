@@ -277,42 +277,63 @@ const ClaimForm = () => {
             initialValues={initialValues}
             validationSchema={validationSchema}
             onSubmit={(values, actions) => {
-              console.log('Formik onSubmit triggered');
-              return handleSubmit(values, actions);
+              console.log('Formik onSubmit triggered with values:', values);
+              try {
+                console.log('Calling handleSubmit...');
+                const result = handleSubmit(values, actions);
+                console.log('handleSubmit called successfully');
+                return result;
+              } catch (error) {
+                console.error('Error in onSubmit:', error);
+                setError(error.message || 'An unexpected error occurred');
+                actions.setSubmitting(false);
+              }
             }}
           >
-            {({ isSubmitting, submitForm }) => (
-              <Form>
-                {getStepContent(activeStep)}
-                
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
-                  <Button
-                    disabled={activeStep === 0}
-                    onClick={handleBack}
-                    sx={{ mr: 1 }}
-                  >
-                    Back
-                  </Button>
-                  <Box sx={{ flex: '1 1 auto' }} />
-                  <Button
-                    variant="contained"
-                    type={activeStep === steps.length - 2 ? "submit" : "button"}
-                    onClick={(e) => {
-                      console.log('Button clicked', { activeStep, isLastStep: activeStep === steps.length - 2 });
-                      if (activeStep !== steps.length - 2) {
-                        handleNext();
-                      } else {
-                        console.log('Attempting form submission');
-                        submitForm();
-                      }
-                    }}
-                    disabled={isSubmitting}
-                  >
-                    {activeStep === steps.length - 2 ? 'Submit Claim' : 'Next'}
-                  </Button>
-                </Box>
-              </Form>
-            )}
+            {({ isSubmitting, submitForm, errors, touched }) => {
+              console.log('Form render - Errors:', errors, 'Touched:', touched);
+              return (
+                <Form>
+                  {getStepContent(activeStep)}
+                  
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 3 }}>
+                    <Button
+                      disabled={activeStep === 0}
+                      onClick={handleBack}
+                      sx={{ mr: 1 }}
+                    >
+                      Back
+                    </Button>
+                    <Box sx={{ flex: '1 1 auto' }} />
+                    <Button
+                      variant="contained"
+                      type={activeStep === steps.length - 2 ? "submit" : "button"}
+                      onClick={(e) => {
+                        console.log('Button clicked', { 
+                          activeStep, 
+                          isLastStep: activeStep === steps.length - 2,
+                          isSubmitting,
+                          hasErrors: Object.keys(errors).length > 0
+                        });
+                        if (activeStep !== steps.length - 2) {
+                          handleNext();
+                        } else {
+                          console.log('Attempting form submission');
+                          e.preventDefault();
+                          submitForm().catch(error => {
+                            console.error('Error submitting form:', error);
+                            setError(error.message || 'An unexpected error occurred');
+                          });
+                        }
+                      }}
+                      disabled={isSubmitting}
+                    >
+                      {activeStep === steps.length - 2 ? 'Submit Claim' : 'Next'}
+                    </Button>
+                  </Box>
+                </Form>
+              );
+            }}
           </Formik>
         )}
       </Paper>
