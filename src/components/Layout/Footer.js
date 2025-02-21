@@ -28,8 +28,13 @@ const Footer = () => {
         >
           <Box
             component="img"
-            src="/images/MAV.1.BackGround.Transparent.PNG"
+            src={`${process.env.PUBLIC_URL}/images/Logo192.PNG`}
             alt="MAV Inc Logo"
+            onError={(e) => {
+              console.error('Error loading image:', e);
+              e.target.onerror = null; // Prevent infinite loop
+              e.target.src = '/images/Logo512.png'; // Try fallback image
+            }}
             sx={{
               height: 44,
               width: 'auto',

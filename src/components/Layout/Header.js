@@ -5,7 +5,6 @@ import {
   Typography,
   IconButton,
   Box,
-  useTheme,
 } from '@mui/material';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
