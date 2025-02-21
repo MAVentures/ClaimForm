@@ -301,13 +301,14 @@ const ClaimForm = () => {
                   3: ['summary']
                 }[activeStep] || [];
 
-                // Only proceed if current step is valid
-                const currentStepValid = !fieldsToValidate.some(field => errors[field]);
+                // Check which fields are invalid
+                const invalidFields = fieldsToValidate.filter(field => errors[field]);
                 
-                if (currentStepValid) {
+                if (invalidFields.length === 0) {
                   setActiveStep((prevStep) => prevStep + 1);
                 } else {
-                  setError('Please fill in all required fields before proceeding');
+                  console.log('Invalid fields:', invalidFields.map(field => `${field}: ${errors[field]}`));
+                  setError(`Please fill in the following required fields: ${invalidFields.join(', ')}`);
                 }
               };
 
@@ -346,8 +347,9 @@ const ClaimForm = () => {
                             console.log('Form is valid, submitting...');
                             await submitForm();
                           } else {
-                            console.log('Form has validation errors');
-                            setError('Please fill in all required fields before submitting');
+                            console.log('Form has validation errors:', errors);
+                            const invalidFields = Object.keys(errors);
+                            setError(`Please fill in the following required fields: ${invalidFields.join(', ')}`);
                           }
                         } else {
                           handleNext();
