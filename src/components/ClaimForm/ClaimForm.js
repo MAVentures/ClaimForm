@@ -163,49 +163,58 @@ const ClaimForm = () => {
       console.log('Form submission started');
       setError(null);
       
-      // Create folder structure in Google Drive
-      const folderId = await createClaimFolder(values);
-      console.log('Folder created:', folderId);
+      // Log the current step and form state
+      console.log('Current step:', activeStep);
+      console.log('Form values:', values);
       
-      // Upload documents to appropriate subfolders
-      const uploadPromises = [];
-      
-      // Upload claim documents
-      if (values.documents && values.documents.length > 0) {
-        console.log('Uploading claim documents...');
-        for (const doc of values.documents) {
-          uploadPromises.push(uploadFileToDrive(doc, folderId));
-        }
-      }
-      
-      // Upload product documents
-      if (values.products) {
-        console.log('Uploading product documents...');
-        for (const product of values.products) {
-          if (product.documents && product.documents.length > 0) {
-            for (const doc of product.documents) {
-              uploadPromises.push(uploadFileToDrive(doc, folderId));
-            }
-          }
-        }
-      }
-      
-      await Promise.all(uploadPromises);
-      console.log('All documents uploaded successfully');
-      
-      // Submit form data to API
+      // Submit form data to API first
+      console.log('Submitting to API...');
       const response = await submitClaimForm({
         ...values,
-        folderId,
         submittedAt: new Date().toISOString(),
       });
       
       console.log('API Response:', response);
       
-      // Set submission state and move to final step
-      setIsSubmitted(true);
-      setActiveStep(steps.length - 1); // Move to the last step (Submitted)
-      console.log('Form submission completed successfully');
+      if (response.success) {
+        // If API call succeeds, create folder and upload files
+        console.log('Creating Google Drive folder...');
+        
+        // Upload documents to appropriate subfolders
+        if (response.folderId) {
+          const uploadTasks = [];
+          
+          // Upload claim documents
+          if (values.documents && values.documents.length > 0) {
+            console.log('Uploading claim documents...');
+            for (const doc of values.documents) {
+              uploadTasks.push(uploadFileToDrive(doc, response.folderId));
+            }
+          }
+          
+          // Upload product documents
+          if (values.products) {
+            console.log('Uploading product documents...');
+            for (const product of values.products) {
+              if (product.documents && product.documents.length > 0) {
+                for (const doc of product.documents) {
+                  uploadTasks.push(uploadFileToDrive(doc, response.folderId));
+                }
+              }
+            }
+          }
+          
+          await Promise.all(uploadTasks);
+          console.log('All documents uploaded successfully');
+        }
+        
+        // Set submission state and move to final step
+        setIsSubmitted(true);
+        setActiveStep(steps.length - 1); // Move to the last step (Submitted)
+        console.log('Form submission completed successfully');
+      } else {
+        throw new Error('API response indicated failure');
+      }
     } catch (error) {
       console.error('Error submitting form:', error);
       setError(error.message || 'An error occurred while submitting the form. Please try again.');

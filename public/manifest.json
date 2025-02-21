@@ -1,21 +1,11 @@
 {
   "short_name": "MAV Claims",
-  "name": "MAV Inc Freight Claims",
+  "name": "MAV Inc Claims Portal",
   "icons": [
     {
-      "src": "images/favicon.ico",
+      "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
       "type": "image/x-icon"
-    },
-    {
-      "src": "images/Logo192.PNG",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "images/Logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
     }
   ],
   "start_url": ".",

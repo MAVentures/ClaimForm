@@ -35,6 +35,12 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log('API Route - Starting claim submission');
+    console.log('Environment variables:', {
+      hasGoogleCreds: !!process.env.GOOGLE_CREDENTIALS_JSON,
+      parentFolderId: process.env.GOOGLE_DRIVE_PARENT_FOLDER_ID,
+    });
+
     const drive = await initializeGoogleDrive();
     const { folderId, ...claimData } = req.body;
 
@@ -42,8 +48,10 @@ export default async function handler(req, res) {
     const folderMetadata = {
       name: `Claim_${claimData.mavRef}_${new Date().toISOString().split('T')[0]}`,
       mimeType: 'application/vnd.google-apps.folder',
-      parents: [process.env.REACT_APP_GOOGLE_DRIVE_PARENT_FOLDER_ID]
+      parents: [process.env.GOOGLE_DRIVE_PARENT_FOLDER_ID]
     };
+
+    console.log('Creating folder with metadata:', folderMetadata);
 
     const folder = await drive.files.create({
       resource: folderMetadata,
