@@ -153,29 +153,6 @@ const ClaimForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState(null);
 
-  const handleNext = () => {
-    // Get the fields that should be validated in the current step
-    const fieldsToValidate = {
-      0: ['claimType', 'mavRef', 'shipmentDate'],
-      1: [
-        'claimantName', 'claimantPhone', 'claimantEmail', 'claimantAddress', 'claimantCity', 'claimantState', 'claimantZip', 'claimantCountry',
-        'shipperName', 'shipperPhone', 'shipperEmail', 'shipperAddress', 'shipperCity', 'shipperState', 'shipperZip', 'shipperCountry',
-        'consigneeName', 'consigneePhone', 'consigneeEmail', 'consigneeAddress', 'consigneeCity', 'consigneeState', 'consigneeZip', 'consigneeCountry'
-      ],
-      2: ['products', 'documents', 'additionalCosts'],
-      3: ['summary']
-    }[activeStep] || [];
-
-    // Only proceed if current step is valid
-    const currentStepValid = !fieldsToValidate.some(field => errors[field]);
-    
-    if (currentStepValid) {
-      setActiveStep((prevStep) => prevStep + 1);
-    } else {
-      setError('Please fill in all required fields before proceeding');
-    }
-  };
-
   const handleBack = () => {
     setActiveStep((prevStep) => prevStep - 1);
   };
@@ -310,6 +287,30 @@ const ClaimForm = () => {
           >
             {({ isSubmitting, submitForm, errors, touched, validateForm }) => {
               console.log('Form render - Errors:', errors, 'Touched:', touched);
+
+              const handleNext = () => {
+                // Get the fields that should be validated in the current step
+                const fieldsToValidate = {
+                  0: ['claimType', 'mavRef', 'shipmentDate'],
+                  1: [
+                    'claimantName', 'claimantPhone', 'claimantEmail', 'claimantAddress', 'claimantCity', 'claimantState', 'claimantZip', 'claimantCountry',
+                    'shipperName', 'shipperPhone', 'shipperEmail', 'shipperAddress', 'shipperCity', 'shipperState', 'shipperZip', 'shipperCountry',
+                    'consigneeName', 'consigneePhone', 'consigneeEmail', 'consigneeAddress', 'consigneeCity', 'consigneeState', 'consigneeZip', 'consigneeCountry'
+                  ],
+                  2: ['products', 'documents', 'additionalCosts'],
+                  3: ['summary']
+                }[activeStep] || [];
+
+                // Only proceed if current step is valid
+                const currentStepValid = !fieldsToValidate.some(field => errors[field]);
+                
+                if (currentStepValid) {
+                  setActiveStep((prevStep) => prevStep + 1);
+                } else {
+                  setError('Please fill in all required fields before proceeding');
+                }
+              };
+
               return (
                 <Form>
                   {getStepContent(activeStep)}
