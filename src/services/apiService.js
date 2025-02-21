@@ -1,5 +1,7 @@
-// API base URL - replace with your actual API endpoint
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.mavinc.com';
+// API base URL - automatically determine based on environment
+const API_BASE_URL = process.env.NODE_ENV === 'development' 
+  ? 'http://localhost:3000'
+  : process.env.REACT_APP_API_URL;
 
 /**
  * Submits the claim form data to the backend API
@@ -8,6 +10,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.mavinc.com'
  */
 export const submitClaimForm = async (formData) => {
   try {
+    console.log('Submitting to:', `${API_BASE_URL}/api/claims`);
     const response = await fetch(`${API_BASE_URL}/api/claims`, {
       method: 'POST',
       headers: {
@@ -17,7 +20,8 @@ export const submitClaimForm = async (formData) => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
