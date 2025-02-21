@@ -154,7 +154,26 @@ const ClaimForm = () => {
   const [error, setError] = useState(null);
 
   const handleNext = () => {
-    setActiveStep((prevStep) => prevStep + 1);
+    // Get the fields that should be validated in the current step
+    const fieldsToValidate = {
+      0: ['claimType', 'mavRef', 'shipmentDate'],
+      1: [
+        'claimantName', 'claimantPhone', 'claimantEmail', 'claimantAddress', 'claimantCity', 'claimantState', 'claimantZip', 'claimantCountry',
+        'shipperName', 'shipperPhone', 'shipperEmail', 'shipperAddress', 'shipperCity', 'shipperState', 'shipperZip', 'shipperCountry',
+        'consigneeName', 'consigneePhone', 'consigneeEmail', 'consigneeAddress', 'consigneeCity', 'consigneeState', 'consigneeZip', 'consigneeCountry'
+      ],
+      2: ['products', 'documents', 'additionalCosts'],
+      3: ['summary']
+    }[activeStep] || [];
+
+    // Only proceed if current step is valid
+    const currentStepValid = !fieldsToValidate.some(field => errors[field]);
+    
+    if (currentStepValid) {
+      setActiveStep((prevStep) => prevStep + 1);
+    } else {
+      setError('Please fill in all required fields before proceeding');
+    }
   };
 
   const handleBack = () => {
@@ -276,13 +295,12 @@ const ClaimForm = () => {
           <Formik
             initialValues={initialValues}
             validationSchema={validationSchema}
-            onSubmit={(values, actions) => {
+            onSubmit={async (values, actions) => {
               console.log('Formik onSubmit triggered with values:', values);
               try {
                 console.log('Calling handleSubmit...');
-                const result = handleSubmit(values, actions);
-                console.log('handleSubmit called successfully');
-                return result;
+                await handleSubmit(values, actions);
+                console.log('handleSubmit completed successfully');
               } catch (error) {
                 console.error('Error in onSubmit:', error);
                 setError(error.message || 'An unexpected error occurred');
@@ -290,7 +308,7 @@ const ClaimForm = () => {
               }
             }}
           >
-            {({ isSubmitting, submitForm, errors, touched }) => {
+            {({ isSubmitting, submitForm, errors, touched, validateForm }) => {
               console.log('Form render - Errors:', errors, 'Touched:', touched);
               return (
                 <Form>
@@ -308,22 +326,30 @@ const ClaimForm = () => {
                     <Button
                       variant="contained"
                       type={activeStep === steps.length - 2 ? "submit" : "button"}
-                      onClick={(e) => {
+                      onClick={async (e) => {
                         console.log('Button clicked', { 
                           activeStep, 
                           isLastStep: activeStep === steps.length - 2,
                           isSubmitting,
                           hasErrors: Object.keys(errors).length > 0
                         });
-                        if (activeStep !== steps.length - 2) {
-                          handleNext();
-                        } else {
-                          console.log('Attempting form submission');
+
+                        if (activeStep === steps.length - 2) {
+                          // On submit step
                           e.preventDefault();
-                          submitForm().catch(error => {
-                            console.error('Error submitting form:', error);
-                            setError(error.message || 'An unexpected error occurred');
-                          });
+                          console.log('Validating entire form before submission...');
+                          const errors = await validateForm();
+                          console.log('Validation errors:', errors);
+                          
+                          if (Object.keys(errors).length === 0) {
+                            console.log('Form is valid, submitting...');
+                            await submitForm();
+                          } else {
+                            console.log('Form has validation errors');
+                            setError('Please fill in all required fields before submitting');
+                          }
+                        } else {
+                          handleNext();
                         }
                       }}
                       disabled={isSubmitting}
